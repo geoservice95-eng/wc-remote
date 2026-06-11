@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>WC Remote</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { background: #0d1117; color: #e6edf3; font-family: -apple-system, system-ui, sans-serif; padding: 16px; max-width: 480px; margin: 0 auto; }
+  h1 { font-size: 18px; letter-spacing: 2px; color: #58a6ff; margin: 8px 0 16px; text-align: center; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 14px; margin-bottom: 14px; }
+  .code-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .code-name { flex: 1; font-size: 17px; font-weight: 700; }
+  button { border: none; border-radius: 10px; font-size: 15px; font-weight: 700; padding: 14px 0; width: 100%; cursor: pointer; }
+  .buy { background: #1f6feb; color: #fff; }
+  .sell { background: #238636; color: #fff; }
+  .pair { display: flex; gap: 10px; }
+  .pair button { flex: 1; }
+  .del { background: none; color: #8b949e; width: 34px; font-size: 18px; padding: 6px; }
+  #status { text-align: center; min-height: 22px; font-size: 14px; margin: 4px 0 12px; color: #8b949e; }
+  #status.ok { color: #3fb950; } #status.err { color: #f85149; }
+  input { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; color: #e6edf3; font-size: 15px; padding: 10px; width: 100%; }
+  .addrow { display: flex; gap: 8px; } .addrow button { width: 90px; padding: 10px 0; background: #30363d; color: #e6edf3; }
+  .alert { border-top: 1px solid #21262d; padding: 8px 2px; font-size: 13px; }
+  .alert b { color: #d29922; display: block; font-size: 12px; }
+  .muted { color: #8b949e; font-size: 12px; text-align: center; margin-top: 6px; }
+  #refresh { background: #21262d; color: #8b949e; font-size: 13px; padding: 8px 0; margin-top: 8px; }
+</style>
+</head>
+<body>
+<h1>⚡ RIVERA WC REMOTE</h1>
+<div id="status"></div>
+<div class="card" id="buttons"></div>
+<div class="card">
+  <div class="addrow">
+    <input id="newcode" placeholder="Add contract code (e.g. USA, MEX)" autocapitalize="characters">
+    <button onclick="addCode()">Add</button>
+  </div>
+  <div class="muted">Codes = last part of the Kalshi ticker (KOR, TIE, PAR…)</div>
+</div>
+<div class="card">
+  <b style="font-size:14px">Recent watcher alerts</b>
+  <div id="alerts"><div class="muted">loading…</div></div>
+  <button id="refresh" onclick="loadAlerts()">↻ refresh</button>
+</div>
+<script>
+const LS = localStorage;
+let topic = LS.getItem('topic');
+while (!topic) { topic = prompt('Enter your ntfy topic (one time):', 'rivera-wc26-'); if (topic) LS.setItem('topic', topic.trim()); }
+let codes = JSON.parse(LS.getItem('codes') || '["KOR","TIE","PAR"]');
+
+function render() {
+  const el = document.getElementById('buttons');
+  el.innerHTML = codes.map((c, i) => `
+    <div class="code-row">
+      <span class="code-name">${c}</span>
+      <div class="pair" style="flex:3">
+        <button class="buy" onclick="send('bought ${c}')">✅ BOUGHT</button>
+        <button class="sell" onclick="send('sold ${c}')">💰 SOLD</button>
+      </div>
+      <button class="del" onclick="delCode(${i})">✕</button>
+    </div>`).join('');
+  LS.setItem('codes', JSON.stringify(codes));
+}
+function addCode() {
+  const v = document.getElementById('newcode').value.trim().toUpperCase();
+  if (v && !codes.includes(v)) { codes.push(v); render(); }
+  document.getElementById('newcode').value = '';
+}
+function delCode(i) { codes.splice(i, 1); render(); }
+
+async function send(msg) {
+  const s = document.getElementById('status');
+  s.className = ''; s.textContent = 'sending "' + msg + '"…';
+  try {
+    const r = await fetch('https://ntfy.sh/' + topic + '-cmd', { method: 'POST', body: msg });
+    if (!r.ok) throw new Error(r.status);
+    s.className = 'ok'; s.textContent = '✓ sent "' + msg + '" — CONFIRMED push will follow';
+    if (navigator.vibrate) navigator.vibrate(80);
+  } catch (e) {
+    s.className = 'err'; s.textContent = '✗ failed: ' + e.message;
+  }
+}
+
+async function loadAlerts() {
+  const el = document.getElementById('alerts');
+  try {
+    const r = await fetch('https://ntfy.sh/' + topic + '/json?poll=1&since=12h');
+    const lines = (await r.text()).split('\n').filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return null; } })
+      .filter(m => m && m.event === 'message').reverse().slice(0, 8);
+    el.innerHTML = lines.length
+      ? lines.map(m => `<div class="alert"><b>${new Date(m.time * 1000).toLocaleTimeString()} — ${m.title || ''}</b>${m.message}</div>`).join('')
+      : '<div class="muted">no alerts in last 12h</div>';
+  } catch (e) { el.innerHTML = '<div class="muted">could not load (' + e.message + ')</div>'; }
+}
+render(); loadAlerts();
+</script>
+</body>
+</html>
