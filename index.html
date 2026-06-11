@@ -80,25 +80,37 @@ async function send(msg, after) {
   } catch (e) { s.className = 'err'; s.textContent = '✗ failed: ' + e.message; }
 }
 
-function tap(code, name, state) {
+let TRIG = []; // flat trigger list; buttons reference by index (apostrophe-safe)
+function tap(i) {
+  const t = TRIG[i];
+  if (!t) return;
+  const state = ownLocal[t.code] || (t.own ? 'own' : 'watch');
   const verb = state === 'own' ? 'sold' : 'bought';
-  if (!confirm((verb === 'bought' ? 'You BOUGHT ' : 'You SOLD ') + name + ' — send it?')) return;
-  send(verb + ' ' + code, () => {
-    ownLocal[code] = verb === 'bought' ? 'own' : 'done';
+  if (!confirm((verb === 'bought' ? 'You BOUGHT ' : 'You SOLD ') + niceName(t.name) + ' — send it?')) return;
+  send(verb + ' ' + t.code, () => {
+    ownLocal[t.code] = verb === 'bought' ? 'own' : 'done';
     LS.setItem('ownLocal', JSON.stringify(ownLocal));
-    loadGames();
+    renderGames();
   });
 }
 
 let GAMES = [];
 async function loadGames() {
+  try {
+    const fresh = await (await fetch('games.json?t=' + Date.now())).json();
+    if (Array.isArray(fresh)) GAMES = fresh; // always refetch; keep old copy on failure
+  } catch {}
+  renderGames();
+}
+
+function renderGames() {
   const el = document.getElementById('games');
   try {
-    if (!GAMES.length) GAMES = await (await fetch('games.json?t=' + Date.now())).json();
     const now = Date.now();
     const live = GAMES.filter(g => Date.parse(g.kickoff) + 3 * 36e5 > now)
       .sort((a, b) => Date.parse(a.kickoff) - Date.parse(b.kickoff));
     if (!live.length) { el.innerHTML = '<div class="muted">No playable edges right now. No bets — that is a position.</div>'; return; }
+    TRIG = [];
     el.innerHTML = live.map(g => {
       const ko = new Date(g.kickoff);
       const isToday = ko.toDateString() === new Date().toDateString();
@@ -107,20 +119,21 @@ async function loadGames() {
       return `<div class="game${isToday ? ' today' : ''}">
         <div class="gh"><b>${g.label}</b><span class="ko">${isToday ? '🔴 TODAY ' : ''}${ko.toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' })}</span></div>
         ${plays.map(t => {
+          const i = TRIG.push(t) - 1;
           const st = ownLocal[t.code] || (t.own ? 'own' : 'watch');
           const chip = st === 'own' ? '<span class="chip c-own">OWNED</span>' : st === 'done' ? '<span class="chip c-done">CLOSED</span>' : '<span class="chip c-watch">WATCHING</span>';
           const btn = st === 'done'
             ? '<button class="act a-done" disabled>done</button>'
             : st === 'own'
-              ? `<button class="act a-sell" onclick="tap('${t.code}','${niceName(t.name)}','own')">💰 I SOLD</button>`
-              : `<button class="act a-buy" onclick="tap('${t.code}','${niceName(t.name)}','watch')">✅ I BOUGHT</button>`;
+              ? `<button class="act a-sell" onclick="tap(${i})">💰 I SOLD</button>`
+              : `<button class="act a-buy" onclick="tap(${i})">✅ I BOUGHT</button>`;
           return `<div class="row"><div class="info"><div class="tname">${niceName(t.name)}${chip}</div>
             <div class="plan">$50 · Buy ≤${t.buyAt}¢ → Sell ≥${t.sellAt}¢</div></div>${btn}</div>`;
         }).join('')}
         ${fades.map(t => `<div class="fade">⚠️ ${niceName(t.name)} — overpriced, do NOT buy</div>`).join('')}
       </div>`;
     }).join('');
-  } catch (e) { el.innerHTML = '<div class="muted">games not published yet (' + e.message + ')</div>'; }
+  } catch (e) { el.innerHTML = '<div class="muted">render error (' + e.message + ')</div>'; }
 }
 
 async function loadAlerts() {
