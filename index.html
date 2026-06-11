@@ -50,7 +50,8 @@
   <div id="alerts"><div class="muted">loading…</div></div>
 </div>
 <details>
-  <summary>manual command (fallback)</summary>
+  <summary>settings & manual command</summary>
+  <div class="muted">topic: <span id="topicshow"></span> · <a href="#" onclick="localStorage.removeItem('topic');location.reload();return false" style="color:#58a6ff">change</a></div>
   <div class="addrow">
     <input id="manual" placeholder='e.g. bought KOR / sold TIE'>
     <button onclick="sendManual()">Send</button>
@@ -59,7 +60,11 @@
 <script>
 const LS = localStorage;
 let topic = LS.getItem('topic');
-while (!topic) { topic = prompt('Enter your ntfy topic (one time):', 'rivera-wc26-'); if (topic) LS.setItem('topic', topic.trim()); }
+// a valid topic never ends with '-' and is reasonably long; bad saves caused lost commands
+while (!topic || topic.endsWith('-') || topic.length < 14) {
+  topic = prompt('Enter your FULL ntfy topic (must match exactly):', topic || 'rivera-wc26-');
+  if (topic) { topic = topic.trim(); LS.setItem('topic', topic); } else topic = LS.getItem('topic');
+}
 let ownLocal = JSON.parse(LS.getItem('ownLocal') || '{}'); // code -> 'own' | 'done' (instant UI, ahead of daily games.json)
 
 const niceName = n => n.replace(/\s*YES.*$/, '').replace(/^Tie$/, 'Draw');
@@ -138,6 +143,7 @@ function sendManual() {
   if (v) send(v);
 }
 
+document.getElementById('topicshow').textContent = topic;
 loadGames(); loadAlerts();
 setInterval(loadAlerts, 60e3);
 setInterval(loadGames, 120e3);
