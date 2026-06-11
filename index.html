@@ -65,9 +65,11 @@ while (!topic || topic.endsWith('-') || topic.length < 14) {
   topic = prompt('Enter your FULL ntfy topic (must match exactly):', topic || 'rivera-wc26-');
   if (topic) { topic = topic.trim(); LS.setItem('topic', topic); } else topic = LS.getItem('topic');
 }
-let ownLocal = JSON.parse(LS.getItem('ownLocal') || '{}'); // code -> 'own' | 'done' (instant UI, ahead of daily games.json)
+let ownLocal = {};
+try { ownLocal = JSON.parse(LS.getItem('ownLocal') || '{}') || {}; } catch { LS.removeItem('ownLocal'); }
 
 const niceName = n => n.replace(/\s*YES.*$/, '').replace(/^Tie$/, 'Draw');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 async function send(msg, after) {
   const s = document.getElementById('status');
@@ -80,9 +82,9 @@ async function send(msg, after) {
   } catch (e) { s.className = 'err'; s.textContent = '✗ failed: ' + e.message; }
 }
 
-let TRIG = []; // flat trigger list; buttons reference by index (apostrophe-safe)
-function tap(i) {
-  const t = TRIG[i];
+let TRIG = {}; // code -> trigger; buttons reference by stable code, not index
+function tap(code) {
+  const t = TRIG[code];
   if (!t) return;
   const state = ownLocal[t.code] || (t.own ? 'own' : 'watch');
   const verb = state === 'own' ? 'sold' : 'bought';
@@ -94,11 +96,19 @@ function tap(i) {
   });
 }
 
-let GAMES = [];
+let GAMES = [], GENERATED = null;
 async function loadGames() {
   try {
-    const fresh = await (await fetch('games.json?t=' + Date.now())).json();
-    if (Array.isArray(fresh)) GAMES = fresh; // always refetch; keep old copy on failure
+    const r = await fetch('games.json?t=' + Date.now());
+    if (r.ok) {
+      const fresh = await r.json();
+      if (Array.isArray(fresh)) { GAMES = fresh; } // legacy shape
+      else if (fresh && Array.isArray(fresh.games)) { GAMES = fresh.games; GENERATED = fresh.generated; }
+      // prune stale local own-state for codes no longer on the board
+      const codes = new Set(GAMES.flatMap(g => g.triggers.map(t => t.code)));
+      for (const k of Object.keys(ownLocal)) if (!codes.has(k)) delete ownLocal[k];
+      LS.setItem('ownLocal', JSON.stringify(ownLocal));
+    }
   } catch {}
   renderGames();
 }
@@ -107,30 +117,34 @@ function renderGames() {
   const el = document.getElementById('games');
   try {
     const now = Date.now();
-    const live = GAMES.filter(g => Date.parse(g.kickoff) + 3 * 36e5 > now)
+    // keep a card visible while you still OWN something in it, even after the game window
+    const live = GAMES.filter(g => Date.parse(g.kickoff) + 3 * 36e5 > now ||
+        g.triggers.some(t => (ownLocal[t.code] || (t.own ? 'own' : '')) === 'own'))
       .sort((a, b) => Date.parse(a.kickoff) - Date.parse(b.kickoff));
-    if (!live.length) { el.innerHTML = '<div class="muted">No playable edges right now. No bets — that is a position.</div>'; return; }
-    TRIG = [];
-    el.innerHTML = live.map(g => {
+    const stale = GENERATED && (now - Date.parse(GENERATED) > 26 * 36e5);
+    const staleBanner = stale ? `<div class="muted" style="color:#f85149">⚠ data is ${Math.round((now - Date.parse(GENERATED)) / 36e5)}h old — daily update may have failed</div>` : '';
+    if (!live.length) { el.innerHTML = staleBanner + '<div class="muted">No playable edges right now. No bets — that is a position.</div>'; return; }
+    TRIG = {};
+    el.innerHTML = staleBanner + live.map(g => {
       const ko = new Date(g.kickoff);
       const isToday = ko.toDateString() === new Date().toDateString();
       const plays = g.triggers.filter(t => t.buyAt > 0);
       const fades = g.triggers.filter(t => !t.buyAt);
       return `<div class="game${isToday ? ' today' : ''}">
-        <div class="gh"><b>${g.label}</b><span class="ko">${isToday ? '🔴 TODAY ' : ''}${ko.toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' })}</span></div>
+        <div class="gh"><b>${esc(g.label)}</b><span class="ko">${isToday ? '🔴 TODAY ' : ''}${ko.toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' })}</span></div>
         ${plays.map(t => {
-          const i = TRIG.push(t) - 1;
+          TRIG[t.code] = t;
           const st = ownLocal[t.code] || (t.own ? 'own' : 'watch');
           const chip = st === 'own' ? '<span class="chip c-own">OWNED</span>' : st === 'done' ? '<span class="chip c-done">CLOSED</span>' : '<span class="chip c-watch">WATCHING</span>';
           const btn = st === 'done'
             ? '<button class="act a-done" disabled>done</button>'
             : st === 'own'
-              ? `<button class="act a-sell" onclick="tap(${i})">💰 I SOLD</button>`
-              : `<button class="act a-buy" onclick="tap(${i})">✅ I BOUGHT</button>`;
-          return `<div class="row"><div class="info"><div class="tname">${niceName(t.name)}${chip}</div>
-            <div class="plan">${t.edge ? '⚡ +' + t.edge + 'pt edge · ' : ''}$50 · Buy ≤${t.buyAt}¢ → Sell ≥${t.sellAt}¢</div></div>${btn}</div>`;
+              ? `<button class="act a-sell" onclick="tap('${esc(t.code)}')">💰 I SOLD</button>`
+              : `<button class="act a-buy" onclick="tap('${esc(t.code)}')">✅ I BOUGHT</button>`;
+          return `<div class="row"><div class="info"><div class="tname">${esc(niceName(t.name))}${chip}</div>
+            <div class="plan">${t.edge ? '⚡ +' + esc(t.edge) + 'pt edge · ' : ''}$50 · Buy ≤${esc(t.buyAt)}¢ → Sell ≥${esc(t.sellAt)}¢</div></div>${btn}</div>`;
         }).join('')}
-        ${fades.map(t => `<div class="fade">⚠️ ${niceName(t.name)} — overpriced, do NOT buy</div>`).join('')}
+        ${fades.map(t => `<div class="fade">⚠️ ${esc(niceName(t.name))} — overpriced, do NOT buy</div>`).join('')}
       </div>`;
     }).join('');
   } catch (e) { el.innerHTML = '<div class="muted">render error (' + e.message + ')</div>'; }
@@ -140,12 +154,13 @@ async function loadAlerts() {
   const el = document.getElementById('alerts');
   try {
     const r = await fetch('https://ntfy.sh/' + topic + '/json?poll=1&since=12h');
+    if (!r.ok) { el.innerHTML = '<div class="muted">feed error ' + r.status + '</div>'; return; }
     const lines = (await r.text()).split('\n').filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return null; } })
       .filter(m => m && m.event === 'message').reverse().slice(0, 6);
     el.innerHTML = lines.length
       ? lines.map(m => {
           const cls = /BUY/.test(m.title) ? 't-buy' : /SELL|CONFIRMED/.test(m.title) ? 't-sell' : /PANIC|DYING|FADE/.test(m.title) ? 't-bad' : 't-info';
-          return `<div class="alert ${cls}"><b>${new Date(m.time * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })} · ${m.title || ''}</b>${m.message}</div>`;
+          return `<div class="alert ${cls}"><b>${new Date(m.time * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })} · ${esc(m.title || '')}</b>${esc(m.message)}</div>`;
         }).join('')
       : '<div class="muted">no alerts in last 12h</div>';
   } catch { el.innerHTML = '<div class="muted">feed unavailable</div>'; }
