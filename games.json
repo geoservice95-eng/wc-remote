@@ -24,8 +24,9 @@
     "name": "Canada YES",
     "buyAt": 66,
     "sellAt": 80,
-    "note": "AUTO: model 70% vs ask 54c (+16pt). Model-only - $50 tier.",
-    "own": false
+    "note": "AUTO PICK: best edge in game. Model 70% vs ask 54c (+16pt). $50 tier.",
+    "own": false,
+    "edge": 16
    },
    {
     "code": "26JUN12CANBIH-BIH",
@@ -43,21 +44,22 @@
   "kickoff": "2026-06-13T01:00Z",
   "triggers": [
    {
+    "code": "26JUN12USAPAR-PAR",
+    "short": "PAR",
+    "name": "Paraguay YES",
+    "buyAt": 29,
+    "sellAt": 64,
+    "note": "AUTO PICK: best edge in game. Model 34% vs ask 23c (+11pt). $50 tier.",
+    "own": false,
+    "edge": 11
+   },
+   {
     "code": "26JUN12USAPAR-USA",
     "short": "USA",
     "name": "USA YES (fade watch)",
     "buyAt": 0,
     "sellAt": 0,
     "note": "AUTO FADE: model 35% vs ask 50c - overpriced, do not buy.",
-    "own": false
-   },
-   {
-    "code": "26JUN12USAPAR-PAR",
-    "short": "PAR",
-    "name": "Paraguay YES",
-    "buyAt": 29,
-    "sellAt": 64,
-    "note": "AUTO: model 34% vs ask 23c (+11pt). Model-only - $50 tier.",
     "own": false
    }
   ]
@@ -72,8 +74,9 @@
     "name": "Tie YES",
     "buyAt": 14,
     "sellAt": 45,
-    "note": "AUTO: model 19% vs ask 14c (+5pt). Model-only - $50 tier.",
-    "own": false
+    "note": "AUTO PICK: best edge in game. Model 19% vs ask 14c (+5pt). $50 tier.",
+    "own": false,
+    "edge": 5
    },
    {
     "code": "26JUN13QATSUI-SUI",
@@ -91,22 +94,14 @@
   "kickoff": "2026-06-13T22:00Z",
   "triggers": [
    {
-    "code": "26JUN13BRAMAR-TIE",
-    "short": "TIE",
-    "name": "Tie YES",
-    "buyAt": 26,
-    "sellAt": 45,
-    "note": "AUTO: model 31% vs ask 25c (+6pt). Model-only - $50 tier.",
-    "own": false
-   },
-   {
     "code": "26JUN13BRAMAR-MAR",
     "short": "MAR",
     "name": "Morocco YES",
     "buyAt": 23,
     "sellAt": 57,
-    "note": "AUTO: model 27% vs ask 18c (+9pt). Model-only - $50 tier.",
-    "own": false
+    "note": "AUTO PICK: best edge in game. Model 27% vs ask 18c (+9pt). $50 tier.",
+    "own": false,
+    "edge": 9
    },
    {
     "code": "26JUN13BRAMAR-BRA",
@@ -129,8 +124,9 @@
     "name": "Tie YES",
     "buyAt": 25,
     "sellAt": 45,
-    "note": "AUTO: model 29% vs ask 22c (+7pt). Model-only - $50 tier.",
-    "own": false
+    "note": "AUTO PICK: best edge in game. Model 29% vs ask 22c (+7pt). $50 tier.",
+    "own": false,
+    "edge": 7
    },
    {
     "code": "26JUN13HTISCO-SCO",
@@ -140,15 +136,6 @@
     "sellAt": 0,
     "note": "AUTO FADE: model 48% vs ask 62c - overpriced, do not buy.",
     "own": false
-   },
-   {
-    "code": "26JUN13HTISCO-HTI",
-    "short": "HTI",
-    "name": "Haiti YES",
-    "buyAt": 18,
-    "sellAt": 53,
-    "note": "AUTO: model 23% vs ask 17c (+6pt). Model-only - $50 tier.",
-    "own": false
    }
   ]
  },
@@ -157,30 +144,22 @@
   "kickoff": "2026-06-13T18:00:00-07:00",
   "triggers": [
    {
+    "code": "26JUN14AUSTUR-AUS",
+    "short": "AUS",
+    "name": "Australia YES",
+    "buyAt": 23,
+    "sellAt": 58,
+    "note": "AUTO PICK: best edge in game. Model 28% vs ask 18c (+10pt). $50 tier.",
+    "own": false,
+    "edge": 10
+   },
+   {
     "code": "26JUN14AUSTUR-TUR",
     "short": "TUR",
     "name": "Turkiye YES (fade watch)",
     "buyAt": 0,
     "sellAt": 0,
     "note": "AUTO FADE: model 41% vs ask 58c - overpriced, do not buy.",
-    "own": false
-   },
-   {
-    "code": "26JUN14AUSTUR-TIE",
-    "short": "TIE",
-    "name": "Tie YES",
-    "buyAt": 26,
-    "sellAt": 45,
-    "note": "AUTO: model 31% vs ask 26c (+5pt). Model-only - $50 tier.",
-    "own": false
-   },
-   {
-    "code": "26JUN14AUSTUR-AUS",
-    "short": "AUS",
-    "name": "Australia YES",
-    "buyAt": 23,
-    "sellAt": 58,
-    "note": "AUTO: model 28% vs ask 18c (+10pt). Model-only - $50 tier.",
     "own": false
    }
   ]
