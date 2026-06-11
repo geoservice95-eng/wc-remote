@@ -9,80 +9,113 @@
 <style>
   :root { color-scheme: dark; }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { background: #0d1117; color: #e6edf3; font-family: -apple-system, system-ui, sans-serif; padding: 16px; max-width: 480px; margin: 0 auto; }
-  h1 { font-size: 18px; letter-spacing: 2px; color: #58a6ff; margin: 8px 0 16px; text-align: center; }
-  .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 14px; margin-bottom: 14px; }
-  .code-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-  .code-name { flex: 1; font-size: 17px; font-weight: 700; }
-  button { border: none; border-radius: 10px; font-size: 15px; font-weight: 700; padding: 14px 0; width: 100%; cursor: pointer; }
-  .buy { background: #1f6feb; color: #fff; }
-  .sell { background: #238636; color: #fff; }
-  .pair { display: flex; gap: 10px; }
-  .pair button { flex: 1; }
-  .del { background: none; color: #8b949e; width: 34px; font-size: 18px; padding: 6px; }
-  #status { text-align: center; min-height: 22px; font-size: 14px; margin: 4px 0 12px; color: #8b949e; }
+  body { background: #0d1117; color: #e6edf3; font-family: -apple-system, system-ui, sans-serif; padding: 14px; max-width: 480px; margin: 0 auto; padding-bottom: 40px; }
+  h1 { font-size: 17px; letter-spacing: 2px; color: #58a6ff; margin: 6px 0 4px; text-align: center; }
+  #status { text-align: center; min-height: 20px; font-size: 13px; margin: 2px 0 10px; color: #8b949e; }
   #status.ok { color: #3fb950; } #status.err { color: #f85149; }
-  input { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; color: #e6edf3; font-size: 15px; padding: 10px; width: 100%; }
-  .addrow { display: flex; gap: 8px; } .addrow button { width: 90px; padding: 10px 0; background: #30363d; color: #e6edf3; }
-  .alert { border-top: 1px solid #21262d; padding: 8px 2px; font-size: 13px; }
-  .alert b { color: #d29922; display: block; font-size: 12px; }
-  .muted { color: #8b949e; font-size: 12px; text-align: center; margin-top: 6px; }
-  #refresh { background: #21262d; color: #8b949e; font-size: 13px; padding: 8px 0; margin-top: 8px; }
+  .game { background: #161b22; border: 1px solid #30363d; border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+  .game.today { border-color: #1f6feb; }
+  .gh { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+  .gh b { font-size: 16px; }
+  .ko { color: #8b949e; font-size: 12px; white-space: nowrap; margin-left: 8px; }
+  .row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid #21262d; }
+  .info { flex: 1; min-width: 0; }
+  .tname { font-size: 15px; font-weight: 700; }
+  .plan { font-size: 12px; color: #8b949e; margin-top: 2px; }
+  .chip { font-size: 10px; font-weight: 800; letter-spacing: 1px; border-radius: 5px; padding: 2px 7px; vertical-align: 2px; margin-left: 6px; }
+  .c-watch { background: #21262d; color: #8b949e; }
+  .c-own { background: #1a3a24; color: #3fb950; }
+  .c-done { background: #21262d; color: #6e7681; }
+  .act { border: none; border-radius: 10px; font-size: 14px; font-weight: 800; padding: 13px 14px; min-width: 118px; cursor: pointer; }
+  .a-buy { background: #1f6feb; color: #fff; }
+  .a-sell { background: #238636; color: #fff; }
+  .a-done { background: #21262d; color: #6e7681; }
+  .fade { color: #d29922; font-size: 12px; padding: 8px 0; border-top: 1px solid #21262d; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+  .alert { border-top: 1px solid #21262d; padding: 8px 2px; font-size: 13px; line-height: 1.35; }
+  .alert b { display: block; font-size: 11px; letter-spacing: 0.5px; }
+  .t-buy b { color: #58a6ff; } .t-sell b { color: #3fb950; } .t-bad b { color: #f85149; } .t-info b { color: #8b949e; }
+  .muted { color: #8b949e; font-size: 12px; text-align: center; padding: 6px 0; }
+  details { margin-top: 4px; } summary { color: #8b949e; font-size: 12px; text-align: center; list-style: none; padding: 6px; }
+  input { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; color: #e6edf3; font-size: 15px; padding: 10px; flex: 1; }
+  .addrow { display: flex; gap: 8px; margin-top: 8px; } .addrow button { width: 80px; border: none; border-radius: 8px; background: #30363d; color: #e6edf3; font-weight: 700; }
 </style>
 </head>
 <body>
 <h1>⚡ RIVERA WC REMOTE</h1>
-<div id="status"></div>
-<div class="card" id="buttons"></div>
+<div id="status">&nbsp;</div>
+<div id="games"><div class="muted">loading…</div></div>
 <div class="card">
-  <div class="addrow">
-    <input id="newcode" placeholder="Add contract code (e.g. USA, MEX)" autocapitalize="characters">
-    <button onclick="addCode()">Add</button>
-  </div>
-  <div class="muted">Codes = last part of the Kalshi ticker (KOR, TIE, PAR…)</div>
-</div>
-<div class="card">
-  <b style="font-size:14px">Recent watcher alerts</b>
+  <b style="font-size:14px">📟 Watcher feed</b>
   <div id="alerts"><div class="muted">loading…</div></div>
-  <button id="refresh" onclick="loadAlerts()">↻ refresh</button>
 </div>
+<details>
+  <summary>manual command (fallback)</summary>
+  <div class="addrow">
+    <input id="manual" placeholder='e.g. bought KOR / sold TIE'>
+    <button onclick="sendManual()">Send</button>
+  </div>
+</details>
 <script>
 const LS = localStorage;
 let topic = LS.getItem('topic');
 while (!topic) { topic = prompt('Enter your ntfy topic (one time):', 'rivera-wc26-'); if (topic) LS.setItem('topic', topic.trim()); }
-let codes = JSON.parse(LS.getItem('codes') || '["KOR","TIE","PAR"]');
+let ownLocal = JSON.parse(LS.getItem('ownLocal') || '{}'); // code -> 'own' | 'done' (instant UI, ahead of daily games.json)
 
-function render() {
-  const el = document.getElementById('buttons');
-  el.innerHTML = codes.map((c, i) => `
-    <div class="code-row">
-      <span class="code-name">${c}</span>
-      <div class="pair" style="flex:3">
-        <button class="buy" onclick="send('bought ${c}')">✅ BOUGHT</button>
-        <button class="sell" onclick="send('sold ${c}')">💰 SOLD</button>
-      </div>
-      <button class="del" onclick="delCode(${i})">✕</button>
-    </div>`).join('');
-  LS.setItem('codes', JSON.stringify(codes));
-}
-function addCode() {
-  const v = document.getElementById('newcode').value.trim().toUpperCase();
-  if (v && !codes.includes(v)) { codes.push(v); render(); }
-  document.getElementById('newcode').value = '';
-}
-function delCode(i) { codes.splice(i, 1); render(); }
+const niceName = n => n.replace(/\s*YES.*$/, '').replace(/^Tie$/, 'Draw');
 
-async function send(msg) {
+async function send(msg, after) {
   const s = document.getElementById('status');
-  s.className = ''; s.textContent = 'sending "' + msg + '"…';
+  s.className = ''; s.textContent = 'sending…';
   try {
     const r = await fetch('https://ntfy.sh/' + topic + '-cmd', { method: 'POST', body: msg });
     if (!r.ok) throw new Error(r.status);
-    s.className = 'ok'; s.textContent = '✓ sent "' + msg + '" — CONFIRMED push will follow';
-    if (navigator.vibrate) navigator.vibrate(80);
-  } catch (e) {
-    s.className = 'err'; s.textContent = '✗ failed: ' + e.message;
-  }
+    s.className = 'ok'; s.textContent = '✓ sent "' + msg + '" — CONFIRMED push follows';
+    if (after) after();
+  } catch (e) { s.className = 'err'; s.textContent = '✗ failed: ' + e.message; }
+}
+
+function tap(code, name, state) {
+  const verb = state === 'own' ? 'sold' : 'bought';
+  if (!confirm((verb === 'bought' ? 'You BOUGHT ' : 'You SOLD ') + name + ' — send it?')) return;
+  send(verb + ' ' + code, () => {
+    ownLocal[code] = verb === 'bought' ? 'own' : 'done';
+    LS.setItem('ownLocal', JSON.stringify(ownLocal));
+    loadGames();
+  });
+}
+
+let GAMES = [];
+async function loadGames() {
+  const el = document.getElementById('games');
+  try {
+    if (!GAMES.length) GAMES = await (await fetch('games.json?t=' + Date.now())).json();
+    const now = Date.now();
+    const live = GAMES.filter(g => Date.parse(g.kickoff) + 3 * 36e5 > now)
+      .sort((a, b) => Date.parse(a.kickoff) - Date.parse(b.kickoff));
+    if (!live.length) { el.innerHTML = '<div class="muted">No playable edges right now. No bets — that is a position.</div>'; return; }
+    el.innerHTML = live.map(g => {
+      const ko = new Date(g.kickoff);
+      const isToday = ko.toDateString() === new Date().toDateString();
+      const plays = g.triggers.filter(t => t.buyAt > 0);
+      const fades = g.triggers.filter(t => !t.buyAt);
+      return `<div class="game${isToday ? ' today' : ''}">
+        <div class="gh"><b>${g.label}</b><span class="ko">${isToday ? '🔴 TODAY ' : ''}${ko.toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' })}</span></div>
+        ${plays.map(t => {
+          const st = ownLocal[t.code] || (t.own ? 'own' : 'watch');
+          const chip = st === 'own' ? '<span class="chip c-own">OWNED</span>' : st === 'done' ? '<span class="chip c-done">CLOSED</span>' : '<span class="chip c-watch">WATCHING</span>';
+          const btn = st === 'done'
+            ? '<button class="act a-done" disabled>done</button>'
+            : st === 'own'
+              ? `<button class="act a-sell" onclick="tap('${t.code}','${niceName(t.name)}','own')">💰 I SOLD</button>`
+              : `<button class="act a-buy" onclick="tap('${t.code}','${niceName(t.name)}','watch')">✅ I BOUGHT</button>`;
+          return `<div class="row"><div class="info"><div class="tname">${niceName(t.name)}${chip}</div>
+            <div class="plan">$50 · Buy ≤${t.buyAt}¢ → Sell ≥${t.sellAt}¢</div></div>${btn}</div>`;
+        }).join('')}
+        ${fades.map(t => `<div class="fade">⚠️ ${niceName(t.name)} — overpriced, do NOT buy</div>`).join('')}
+      </div>`;
+    }).join('');
+  } catch (e) { el.innerHTML = '<div class="muted">games not published yet (' + e.message + ')</div>'; }
 }
 
 async function loadAlerts() {
@@ -90,13 +123,24 @@ async function loadAlerts() {
   try {
     const r = await fetch('https://ntfy.sh/' + topic + '/json?poll=1&since=12h');
     const lines = (await r.text()).split('\n').filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return null; } })
-      .filter(m => m && m.event === 'message').reverse().slice(0, 8);
+      .filter(m => m && m.event === 'message').reverse().slice(0, 6);
     el.innerHTML = lines.length
-      ? lines.map(m => `<div class="alert"><b>${new Date(m.time * 1000).toLocaleTimeString()} — ${m.title || ''}</b>${m.message}</div>`).join('')
+      ? lines.map(m => {
+          const cls = /BUY/.test(m.title) ? 't-buy' : /SELL|CONFIRMED/.test(m.title) ? 't-sell' : /PANIC|DYING|FADE/.test(m.title) ? 't-bad' : 't-info';
+          return `<div class="alert ${cls}"><b>${new Date(m.time * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })} · ${m.title || ''}</b>${m.message}</div>`;
+        }).join('')
       : '<div class="muted">no alerts in last 12h</div>';
-  } catch (e) { el.innerHTML = '<div class="muted">could not load (' + e.message + ')</div>'; }
+  } catch { el.innerHTML = '<div class="muted">feed unavailable</div>'; }
 }
-render(); loadAlerts();
+
+function sendManual() {
+  const v = document.getElementById('manual').value.trim();
+  if (v) send(v);
+}
+
+loadGames(); loadAlerts();
+setInterval(loadAlerts, 60e3);
+setInterval(loadGames, 120e3);
 </script>
 </body>
 </html>
