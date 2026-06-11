@@ -142,5 +142,29 @@
     "own": false
    }
   ]
+ },
+ {
+  "label": "Australia v Turkey",
+  "kickoff": "2026-06-13T18:00:00-07:00",
+  "triggers": [
+   {
+    "code": "26JUN14AUSTUR-TUR",
+    "short": "TUR",
+    "name": "Turkiye YES (fade watch)",
+    "buyAt": 0,
+    "sellAt": 0,
+    "note": "AUTO FADE: model 42% vs ask 58c - overpriced, do not buy.",
+    "own": false
+   },
+   {
+    "code": "26JUN14AUSTUR-AUS",
+    "short": "AUS",
+    "name": "Australia YES",
+    "buyAt": 24,
+    "sellAt": 59,
+    "note": "AUTO: model 29% vs ask 18c (+11pt). Model-only - $50 tier.",
+    "own": false
+   }
+  ]
  }
 ]
