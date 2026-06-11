@@ -128,7 +128,7 @@ function renderGames() {
               ? `<button class="act a-sell" onclick="tap(${i})">💰 I SOLD</button>`
               : `<button class="act a-buy" onclick="tap(${i})">✅ I BOUGHT</button>`;
           return `<div class="row"><div class="info"><div class="tname">${niceName(t.name)}${chip}</div>
-            <div class="plan">$50 · Buy ≤${t.buyAt}¢ → Sell ≥${t.sellAt}¢</div></div>${btn}</div>`;
+            <div class="plan">${t.edge ? '⚡ +' + t.edge + 'pt edge · ' : ''}$50 · Buy ≤${t.buyAt}¢ → Sell ≥${t.sellAt}¢</div></div>${btn}</div>`;
         }).join('')}
         ${fades.map(t => `<div class="fade">⚠️ ${niceName(t.name)} — overpriced, do NOT buy</div>`).join('')}
       </div>`;
