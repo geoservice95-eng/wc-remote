@@ -96,14 +96,14 @@ function tap(code) {
   });
 }
 
-let GAMES = [], GENERATED = null;
+let GAMES = [], GENERATED = null, LOADED = false;
 async function loadGames() {
   try {
     const r = await fetch('games.json?t=' + Date.now());
     if (r.ok) {
       const fresh = await r.json();
-      if (Array.isArray(fresh)) { GAMES = fresh; } // legacy shape
-      else if (fresh && Array.isArray(fresh.games)) { GAMES = fresh.games; GENERATED = fresh.generated; }
+      if (Array.isArray(fresh)) { GAMES = fresh; LOADED = true; } // legacy shape
+      else if (fresh && Array.isArray(fresh.games)) { GAMES = fresh.games; GENERATED = fresh.generated; LOADED = true; }
       // prune stale local own-state for codes no longer on the board
       const codes = new Set(GAMES.flatMap(g => g.triggers.map(t => t.code)));
       for (const k of Object.keys(ownLocal)) if (!codes.has(k)) delete ownLocal[k];
@@ -117,13 +117,20 @@ function renderGames() {
   const el = document.getElementById('games');
   try {
     const now = Date.now();
-    // finished games auto-clear on refresh: gone 2.5h after kickoff (~30 min past the
-    // final whistle). Positions settle automatically at game end, so no action remains.
-    const live = GAMES.filter(g => Date.parse(g.kickoff) + 2.5 * 36e5 > now)
+    // finished games auto-clear on refresh: gone once the watch window closes
+    // (kickoff + published window, default 2.5h — wide for unverified kickoffs).
+    // Positions settle automatically at game end, so no action remains.
+    const live = GAMES.filter(g => Date.parse(g.kickoff) + (g.until ?? 2.5) * 36e5 > now)
       .sort((a, b) => Date.parse(a.kickoff) - Date.parse(b.kickoff));
     const stale = GENERATED && (now - Date.parse(GENERATED) > 26 * 36e5);
     const staleBanner = stale ? `<div class="muted" style="color:#f85149">⚠ data is ${Math.round((now - Date.parse(GENERATED)) / 36e5)}h old — daily update may have failed</div>` : '';
-    if (!live.length) { el.innerHTML = staleBanner + '<div class="muted">No playable edges right now. No bets — that is a position.</div>'; return; }
+    if (!live.length) {
+      // never show a confident empty board when we simply failed to load data
+      el.innerHTML = staleBanner + (LOADED
+        ? '<div class="muted">No playable edges right now. No bets — that is a position.</div>'
+        : '<div class="muted" style="color:#f85149">⚠ couldn\'t load games.json — check connection and refresh</div>');
+      return;
+    }
     TRIG = {};
     el.innerHTML = staleBanner + live.map(g => {
       const ko = new Date(g.kickoff);
@@ -159,7 +166,7 @@ async function loadAlerts() {
       .filter(m => m && m.event === 'message').reverse().slice(0, 6);
     el.innerHTML = lines.length
       ? lines.map(m => {
-          const cls = /BUY/.test(m.title) ? 't-buy' : /SELL|CONFIRMED/.test(m.title) ? 't-sell' : /PANIC|DYING|FADE|DISTRESS/.test(m.title) ? 't-bad' : 't-info';
+          const cls = /BUY/.test(m.title) ? 't-buy' : /SELL|CONFIRMED/.test(m.title) ? 't-sell' : /PANIC|DYING|FADE|DISTRESS|DOWN|CRASH|FAILED/.test(m.title) ? 't-bad' : 't-info';
           return `<div class="alert ${cls}"><b>${new Date(m.time * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })} · ${esc(m.title || '')}</b>${esc(m.message)}</div>`;
         }).join('')
       : '<div class="muted">no alerts in last 12h</div>';
