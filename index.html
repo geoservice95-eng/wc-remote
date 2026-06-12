@@ -159,7 +159,7 @@ async function loadAlerts() {
       .filter(m => m && m.event === 'message').reverse().slice(0, 6);
     el.innerHTML = lines.length
       ? lines.map(m => {
-          const cls = /BUY/.test(m.title) ? 't-buy' : /SELL|CONFIRMED/.test(m.title) ? 't-sell' : /PANIC|DYING|FADE/.test(m.title) ? 't-bad' : 't-info';
+          const cls = /BUY/.test(m.title) ? 't-buy' : /SELL|CONFIRMED/.test(m.title) ? 't-sell' : /PANIC|DYING|FADE|DISTRESS/.test(m.title) ? 't-bad' : 't-info';
           return `<div class="alert ${cls}"><b>${new Date(m.time * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })} · ${esc(m.title || '')}</b>${esc(m.message)}</div>`;
         }).join('')
       : '<div class="muted">no alerts in last 12h</div>';
