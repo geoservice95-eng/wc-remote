@@ -1,5 +1,5 @@
 {
- "generated": "2026-06-12T05:35:20.096Z",
+ "generated": "2026-06-12T11:00:06.705Z",
  "games": [
   {
    "label": "Canada v Bosnia and Herzegovina",
@@ -48,7 +48,7 @@
      "name": "USA YES (fade watch)",
      "buyAt": 0,
      "sellAt": 0,
-     "note": "AUTO FADE: model 36% vs ask 49c - overpriced, do not buy.",
+     "note": "AUTO FADE: model 36% vs ask 48c - overpriced, do not buy.",
      "own": false
     }
    ]
@@ -132,9 +132,9 @@
      "name": "Australia YES",
      "buyAt": 24,
      "sellAt": 59,
-     "note": "AUTO PICK: best edge in game. Model 29% vs ask 18c (+11pt). $50 tier.",
+     "note": "AUTO PICK: best edge in game. Model 29% vs ask 19c (+10pt). $50 tier.",
      "own": false,
-     "edge": 11
+     "edge": 10
     },
     {
      "code": "26JUN14AUSTUR-TUR",
