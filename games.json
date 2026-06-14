@@ -1,100 +1,6 @@
 {
- "generated": "2026-06-13T11:00:07.186Z",
+ "generated": "2026-06-14T11:00:07.628Z",
  "games": [
-  {
-   "label": "Qatar v Switzerland",
-   "kickoff": "2026-06-13T19:00Z",
-   "until": 2.5,
-   "triggers": [
-    {
-     "code": "26JUN13QATSUI-SUI",
-     "short": "SUI",
-     "name": "Switzerland YES (fade watch)",
-     "buyAt": 0,
-     "sellAt": 0,
-     "note": "AUTO FADE: model 73% vs ask 82c - overpriced, do not buy.",
-     "own": false
-    }
-   ]
-  },
-  {
-   "label": "Brazil v Morocco",
-   "kickoff": "2026-06-13T22:00Z",
-   "until": 2.5,
-   "triggers": [
-    {
-     "code": "26JUN13BRAMAR-MAR",
-     "short": "MAR",
-     "name": "Morocco YES",
-     "buyAt": 23,
-     "sellAt": 57,
-     "note": "AUTO PICK: best edge in game. Model 27% vs ask 18c (+9pt). $50 tier.",
-     "own": true,
-     "edge": 9
-    },
-    {
-     "code": "26JUN13BRAMAR-BRA",
-     "short": "BRA",
-     "name": "Brazil YES (fade watch)",
-     "buyAt": 0,
-     "sellAt": 0,
-     "note": "AUTO FADE: model 43% vs ask 59c - overpriced, do not buy.",
-     "own": false
-    }
-   ]
-  },
-  {
-   "label": "Haiti v Scotland",
-   "kickoff": "2026-06-14T01:00Z",
-   "until": 2.5,
-   "triggers": [
-    {
-     "code": "26JUN13HTISCO-HTI",
-     "short": "HTI",
-     "name": "Haiti YES",
-     "buyAt": 19,
-     "sellAt": 53,
-     "note": "AUTO PICK: best edge in game. Model 23% vs ask 17c (+6pt). $50 tier.",
-     "own": true,
-     "edge": 6
-    },
-    {
-     "code": "26JUN13HTISCO-SCO",
-     "short": "SCO",
-     "name": "Scotland YES (fade watch)",
-     "buyAt": 0,
-     "sellAt": 0,
-     "note": "AUTO FADE: model 49% vs ask 63c - overpriced, do not buy.",
-     "own": false
-    }
-   ]
-  },
-  {
-   "label": "Australia v Turkey",
-   "kickoff": "2026-06-14T04:00Z",
-   "until": 2.5,
-   "triggers": [
-    {
-     "code": "26JUN14AUSTUR-AUS",
-     "short": "AUS",
-     "name": "Australia YES",
-     "buyAt": 24,
-     "sellAt": 59,
-     "note": "AUTO PICK: best edge in game. Model 29% vs ask 19c (+10pt). $50 tier.",
-     "own": false,
-     "edge": 10
-    },
-    {
-     "code": "26JUN14AUSTUR-TUR",
-     "short": "TUR",
-     "name": "Turkiye YES (fade watch)",
-     "buyAt": 0,
-     "sellAt": 0,
-     "note": "AUTO FADE: model 42% vs ask 58c - overpriced, do not buy.",
-     "own": false
-    }
-   ]
-  },
   {
    "label": "Germany v Curaçao",
    "kickoff": "2026-06-14T17:00Z",
@@ -132,9 +38,9 @@
      "name": "Ecuador YES",
      "buyAt": 52,
      "sellAt": 80,
-     "note": "AUTO PICK: best edge in game. Model 56% vs ask 41c (+15pt). $50 tier.",
+     "note": "AUTO PICK: best edge in game. Model 56% vs ask 40c (+16pt). $50 tier.",
      "own": false,
-     "edge": 15
+     "edge": 16
     },
     {
      "code": "26JUN14CIVECU-TIE",
@@ -151,7 +57,7 @@
      "name": "Ivory Coast YES (fade watch)",
      "buyAt": 0,
      "sellAt": 0,
-     "note": "AUTO FADE: model 18% vs ask 28c - overpriced, do not buy.",
+     "note": "AUTO FADE: model 18% vs ask 30c - overpriced, do not buy.",
      "own": false
     }
    ]
@@ -167,9 +73,9 @@
      "name": "Japan YES",
      "buyAt": 29,
      "sellAt": 63,
-     "note": "AUTO PICK: best edge in game. Model 33% vs ask 26c (+7pt). $50 tier.",
+     "note": "AUTO PICK: best edge in game. Model 33% vs ask 27c (+6pt). $50 tier.",
      "own": false,
-     "edge": 7
+     "edge": 6
     },
     {
      "code": "26JUN14NEDJPN-NED",
@@ -177,7 +83,7 @@
      "name": "Netherlands YES (fade watch)",
      "buyAt": 0,
      "sellAt": 0,
-     "note": "AUTO FADE: model 37% vs ask 49c - overpriced, do not buy.",
+     "note": "AUTO FADE: model 37% vs ask 48c - overpriced, do not buy.",
      "own": false
     }
    ]
@@ -231,6 +137,135 @@
      "sellAt": 0,
      "note": "AUTO FADE: model 50% vs ask 61c - overpriced, do not buy.",
      "own": false
+    }
+   ]
+  },
+  {
+   "label": "France v Senegal",
+   "kickoff": "2026-06-16T19:00Z",
+   "until": 2.5,
+   "triggers": [
+    {
+     "code": "26JUN16FRASEN-SEN",
+     "short": "SEN",
+     "name": "Senegal YES",
+     "buyAt": 14,
+     "sellAt": 48,
+     "note": "AUTO PICK: best edge in game. Model 18% vs ask 13c (+5pt). $50 tier.",
+     "own": false,
+     "edge": 5
+    },
+    {
+     "code": "26JUN16FRASEN-FRA",
+     "short": "FRA",
+     "name": "France YES (fade watch)",
+     "buyAt": 0,
+     "sellAt": 0,
+     "note": "AUTO FADE: model 56% vs ask 68c - overpriced, do not buy.",
+     "own": false
+    }
+   ]
+  },
+  {
+   "label": "Iraq v Norway",
+   "kickoff": "2026-06-16T22:00Z",
+   "until": 2.5,
+   "triggers": [
+    {
+     "code": "26JUN16IRQNOR-TIE",
+     "short": "TIE",
+     "name": "Tie YES",
+     "buyAt": 20,
+     "sellAt": 45,
+     "note": "AUTO PICK: best edge in game. Model 25% vs ask 13c (+12pt). $50 tier.",
+     "own": false,
+     "edge": 12
+    },
+    {
+     "code": "26JUN16IRQNOR-NOR",
+     "short": "NOR",
+     "name": "Norway YES (fade watch)",
+     "buyAt": 0,
+     "sellAt": 0,
+     "note": "AUTO FADE: model 58% vs ask 83c - overpriced, do not buy.",
+     "own": false
+    }
+   ]
+  },
+  {
+   "label": "Austria v Jordan (KICKOFF UNVERIFIED)",
+   "kickoff": "2026-06-16T18:00:00-07:00",
+   "until": 10,
+   "triggers": [
+    {
+     "code": "26JUN17AUTJOR-JOR",
+     "short": "JOR",
+     "name": "Jordan YES",
+     "buyAt": 20,
+     "sellAt": 55,
+     "note": "AUTO PICK: best edge in game. Model 25% vs ask 11c (+14pt). $50 tier.",
+     "own": false,
+     "edge": 14
+    },
+    {
+     "code": "26JUN17AUTJOR-AUT",
+     "short": "AUT",
+     "name": "Austria YES (fade watch)",
+     "buyAt": 0,
+     "sellAt": 0,
+     "note": "AUTO FADE: model 46% vs ask 73c - overpriced, do not buy.",
+     "own": false
+    }
+   ]
+  },
+  {
+   "label": "Brazil v Morocco",
+   "kickoff": "2026-06-13T22:00Z",
+   "until": 2.5,
+   "triggers": [
+    {
+     "code": "26JUN13BRAMAR-MAR",
+     "short": "MAR",
+     "name": "Morocco YES",
+     "buyAt": 23,
+     "sellAt": 57,
+     "note": "AUTO PICK: best edge in game. Model 27% vs ask 18c (+9pt). $50 tier.",
+     "own": true,
+     "edge": 9
+    }
+   ]
+  },
+  {
+   "label": "Haiti v Scotland",
+   "kickoff": "2026-06-14T01:00Z",
+   "until": 2.5,
+   "triggers": [
+    {
+     "code": "26JUN13HTISCO-HTI",
+     "short": "HTI",
+     "name": "Haiti YES",
+     "buyAt": 19,
+     "sellAt": 53,
+     "note": "AUTO PICK: best edge in game. Model 23% vs ask 17c (+6pt). $50 tier.",
+     "own": true,
+     "edge": 6
+    }
+   ]
+  },
+  {
+   "label": "Australia v Turkey",
+   "kickoff": "2026-06-14T04:00Z",
+   "until": 2.5,
+   "triggers": [
+    {
+     "code": "26JUN14AUSTUR-AUS",
+     "short": "AUS",
+     "name": "Australia YES",
+     "buyAt": 24,
+     "sellAt": 59,
+     "note": "AUTO PICK: best edge in game. Model 29% vs ask 19c (+10pt). $50 tier.",
+     "own": true,
+     "edge": 10
     }
    ]
   },
